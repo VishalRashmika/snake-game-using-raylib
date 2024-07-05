@@ -19,6 +19,7 @@ Building process:
 
 Color green = {173,204,96,255};
 Color dark_green = {43,51,24,255};
+Color blue = {230,230,250,255};
 
 int cellsize = 30;
 int cellcount = 25;
@@ -119,6 +120,19 @@ public:
     bool running = true;
     int score = 0;
 
+    Sound eatsound;
+    Sound wallsound;
+    Game(){
+        InitAudioDevice();
+        eatsound = LoadSound("sounds/eat.mp3");
+        wallsound = LoadSound("sounds/wall.mp3");
+    }
+    ~Game(){
+        UnloadSound(eatsound);
+        UnloadSound(wallsound);
+        CloseAudioDevice();
+    }
+
     void Draw(){
         food.Draw();
         snake.Draw();
@@ -138,6 +152,7 @@ public:
             food.position = food.GenerateRandomPos(snake.body);
             snake.addsegment = true;
             score++;
+            PlaySound(eatsound);
         }
     }
     void checkcollisionwithedges(){
@@ -154,6 +169,7 @@ public:
         food.position = food.GenerateRandomPos(snake.body);
         running = false;
         score = 0;
+        PlaySound(wallsound);
     }
     void checkcollisionwithtail(){
         std::deque<Vector2> headlessbody = snake.body;
@@ -200,7 +216,7 @@ int main(){
 
 
         //Drawing
-        ClearBackground(green);
+        ClearBackground(blue);
         DrawRectangleLinesEx(Rectangle{(float)offset - 5,(float) offset -5,(float)(cellsize * cellcount + 10),(float)(cellsize * cellcount + 10)}, 5, dark_green);
         
         DrawText("Retro Snake",offset -5, 20 ,40 ,dark_green);
