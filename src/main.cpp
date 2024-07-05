@@ -1,7 +1,7 @@
 /*
 Building process:
     //1. creating an blank canvas & game loop
-    2. creating the food
+    //2. creating the food
     3. creating the snake
     4. moving the snake
     5. making the snake eat the food
@@ -14,6 +14,7 @@ Building process:
 
 #include <iostream>
 #include <raylib.h>
+#include <deque>
 
 Color green = {173,204,96,255};
 Color dark_green = {43,51,24,255};
@@ -21,8 +22,22 @@ Color dark_green = {43,51,24,255};
 int cellsize = 30;
 int cellcount = 25;
 
+class Snake{
+public:
+    std::deque<Vector2> body = {Vector2{6,9}, Vector2{5,9}, Vector2{4,9}};
+
+    void Draw(){
+        for (unsigned int i = 0; i < body.size(); i++){
+            int x = body[i].x;
+            int y = body[i].y;
+            DrawRectangle(x*cellsize,y*cellsize,cellsize,cellsize,dark_green);
+        }
+    }
+};
 class Food{
 public:
+    Vector2 position;
+
     Texture2D texture;
 
     Food(){
@@ -55,6 +70,7 @@ int main(){
     SetTargetFPS(60);
 
     Food food = Food();
+    Snake snake = Snake();
 
     while(WindowShouldClose() == false){
         BeginDrawing();
@@ -62,6 +78,7 @@ int main(){
         //Drawing
         ClearBackground(green);
         food.Draw();
+        snake.Draw();
 
         EndDrawing();
     }
