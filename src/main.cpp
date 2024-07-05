@@ -22,6 +22,7 @@ Color dark_green = {43,51,24,255};
 
 int cellsize = 30;
 int cellcount = 25;
+int offset = 75;
 
 double lastUpdateTime = 0;
 
@@ -53,7 +54,7 @@ public:
         for (unsigned int i = 0; i < body.size(); i++){
             float x = body[i].x;
             float y = body[i].y;
-            Rectangle segment = Rectangle{x*cellsize,y*cellsize,(float)cellsize,(float)cellsize};
+            Rectangle segment = Rectangle{offset + x*cellsize,offset + y*cellsize,(float)cellsize,(float)cellsize};
             DrawRectangleRounded(segment,0.5,6,dark_green);
         }
     }
@@ -93,7 +94,7 @@ public:
     }
 
     void Draw(){
-        DrawTexture(texture, position.x * cellsize,position.y * cellsize, BLACK);
+        DrawTexture(texture,offset + position.x * cellsize,offset + position.y * cellsize, BLACK);
     }
 
     Vector2 generaterandomcell(){
@@ -163,7 +164,7 @@ public:
 int main(){
     std::cout << "Starting the game...." << std::endl;
 
-    InitWindow(cellsize*cellcount,cellsize*cellcount,"Retro Snake");
+    InitWindow((cellsize * cellcount) + (2 * offset) ,(cellsize * cellcount)  + (2 * offset),"Retro Snake");
     SetTargetFPS(60);
 
     Game game = Game();
@@ -197,6 +198,7 @@ int main(){
 
         //Drawing
         ClearBackground(green);
+        DrawRectangleLinesEx(Rectangle{(float)offset - 5,(float) offset -5,(float)(cellsize * cellcount + 10),(float)(cellsize * cellcount + 10)}, 5, dark_green);
         game.Draw();
 
         EndDrawing();
