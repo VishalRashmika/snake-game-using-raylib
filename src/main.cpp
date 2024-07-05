@@ -2,7 +2,7 @@
 Building process:
     //1. creating an blank canvas & game loop
     //2. creating the food
-    3. creating the snake
+    //3. creating the snake
     4. moving the snake
     5. making the snake eat the food
     6. making the snake grow longer
@@ -15,6 +15,7 @@ Building process:
 #include <iostream>
 #include <raylib.h>
 #include <deque>
+#include <raymath.h>
 
 Color green = {173,204,96,255};
 Color dark_green = {43,51,24,255};
@@ -22,17 +23,35 @@ Color dark_green = {43,51,24,255};
 int cellsize = 30;
 int cellcount = 25;
 
+double lastUpdateTime = 0;
+
+bool eventTriggered(double interval){
+    double currentTime = GetTime();
+    if (currentTime - lastUpdateTime >= interval){
+        lastUpdateTime = currentTime;
+        return true;
+    }
+    return false;
+}
+
 class Snake{
 public:
     std::deque<Vector2> body = {Vector2{6,9}, Vector2{5,9}, Vector2{4,9}};
+    Vector2 direction = {1,0};
 
     void Draw(){
         for (unsigned int i = 0; i < body.size(); i++){
-            int x = body[i].x;
-            int y = body[i].y;
-            DrawRectangle(x*cellsize,y*cellsize,cellsize,cellsize,dark_green);
+            float x = body[i].x;
+            float y = body[i].y;
+            Rectangle segment = Rectangle{x*cellsize,y*cellsize,(float)cellsize,(float)cellsize};
+            DrawRectangleRounded(segment,0.5,6,dark_green);
         }
     }
+
+    void Update(){
+        body.pop_back();
+        body.push_front(Vector2Add(body[0], direction));
+    }   
 };
 class Food{
 public:
@@ -75,6 +94,10 @@ int main(){
     while(WindowShouldClose() == false){
         BeginDrawing();
 
+        if (eventTriggered(0.2)){
+            snake.Update();
+        }
+        
         //Drawing
         ClearBackground(green);
         food.Draw();
