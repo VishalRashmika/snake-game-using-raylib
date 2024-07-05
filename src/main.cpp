@@ -1,6 +1,6 @@
 /*
 Building process:
-    1. creating an blank canvas & game loop
+    //1. creating an blank canvas & game loop
     2. creating the food
     3. creating the snake
     4. moving the snake
@@ -18,19 +18,33 @@ Building process:
 Color green = {173,204,96,255};
 Color dark_green = {43,51,24,255};
 
+int cellsize = 30;
+int cellcount = 25;
+
+class Food{
+public:
+    Vector2 position = {5,6};
+
+    void Draw(){
+        DrawRectangle(position.x * cellsize,position.y * cellsize,cellsize,cellsize,dark_green);
+    }
+};
 
 int main(){
     std::cout << "Starting the game...." << std::endl;
 
-    InitWindow(750,750,"Retro Snake");
+    InitWindow(cellsize*cellcount,cellsize*cellcount,"Retro Snake");
     SetTargetFPS(60);
+
+    Food food = Food();
 
     while(WindowShouldClose() == false){
         BeginDrawing();
 
         //Drawing
         ClearBackground(green);
-        
+        food.Draw();
+
         EndDrawing();
     }
 
