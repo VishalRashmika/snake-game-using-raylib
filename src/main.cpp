@@ -4,7 +4,7 @@ Building process:
     //2. creating the food
     //3. creating the snake
     //4. moving the snake
-    5. making the snake eat the food
+    //5. making the snake eat the food
     6. making the snake grow longer
     7. checking for collisions with edges and tail
     8. adding title & frame
@@ -25,6 +25,15 @@ int cellcount = 25;
 
 double lastUpdateTime = 0;
 
+bool ElementinDeque(Vector2 element, std::deque<Vector2> deque_in ){
+    for (unsigned int i = 0; i < deque_in.size(); i++){
+        if (Vector2Equals(deque_in[i], element)){
+            return true;
+        }
+    }
+    return false;
+}
+
 bool eventTriggered(double interval){
     double currentTime = GetTime();
     if (currentTime - lastUpdateTime >= interval){
@@ -38,6 +47,7 @@ class Snake{
 public:
     std::deque<Vector2> body = {Vector2{6,9}, Vector2{5,9}, Vector2{4,9}};
     Vector2 direction = {1,0};
+    bool addsegment = false;
 
     void Draw(){
         for (unsigned int i = 0; i < body.size(); i++){
@@ -49,8 +59,15 @@ public:
     }
 
     void Update(){
-        body.pop_back();
-        body.push_front(Vector2Add(body[0], direction));
+        body.push_front(Vector2Add(body[0],direction));
+
+        if (addsegment == true){
+            addsegment = false;
+        }
+        else{   
+            body.pop_back();
+        }
+
     }   
 };
 class Food{
@@ -59,11 +76,11 @@ public:
 
     Texture2D texture;
 
-    Food(){
+    Food(std::deque<Vector2> snakebody){
         Image image = LoadImage("graphics/food.png");
         texture = LoadTextureFromImage(image);
         UnloadImage(image);
-        position = GenerateRandomPos();
+        position = GenerateRandomPos(snakebody);
 
     }
 
@@ -75,17 +92,25 @@ public:
         DrawTexture(texture, position.x * cellsize,position.y * cellsize, BLACK);
     }
 
-    Vector2 GenerateRandomPos(){
+    Vector2 generaterandomcell(){
         float x = GetRandomValue(0, cellcount - 1);
         float y = GetRandomValue(0, cellcount - 1);
         return Vector2{x,y};
+    }
+
+    Vector2 GenerateRandomPos(std::deque<Vector2> snakebody){
+        Vector2 position = generaterandomcell();
+        while(ElementinDeque(position,snakebody)){
+            position = generaterandomcell();
+        }
+        return position;
     }
 };
 
 class Game{
 public:
     Snake snake = Snake();
-    Food food = Food();
+    Food food = Food(snake.body);
 
     void Draw(){
         food.Draw();
@@ -95,6 +120,14 @@ public:
     void Update(){
         // food.Update();
         snake.Update();
+        checkcollisionwithfood();
+    }
+
+    void checkcollisionwithfood(){
+        if (Vector2Equals(snake.body[0], food.position)){
+            food.position = food.GenerateRandomPos(snake.body);
+            snake.addsegment = true;
+        }
     }
 };
 
