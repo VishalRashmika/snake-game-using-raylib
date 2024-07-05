@@ -117,6 +117,7 @@ public:
     Snake snake = Snake();
     Food food = Food(snake.body);
     bool running = true;
+    int score = 0;
 
     void Draw(){
         food.Draw();
@@ -136,6 +137,7 @@ public:
         if (Vector2Equals(snake.body[0], food.position)){
             food.position = food.GenerateRandomPos(snake.body);
             snake.addsegment = true;
+            score++;
         }
     }
     void checkcollisionwithedges(){
@@ -151,6 +153,7 @@ public:
         snake.reset();
         food.position = food.GenerateRandomPos(snake.body);
         running = false;
+        score = 0;
     }
     void checkcollisionwithtail(){
         std::deque<Vector2> headlessbody = snake.body;
@@ -199,6 +202,10 @@ int main(){
         //Drawing
         ClearBackground(green);
         DrawRectangleLinesEx(Rectangle{(float)offset - 5,(float) offset -5,(float)(cellsize * cellcount + 10),(float)(cellsize * cellcount + 10)}, 5, dark_green);
+        
+        DrawText("Retro Snake",offset -5, 20 ,40 ,dark_green);
+        DrawText(TextFormat("%i",game.score),offset -5, offset+ cellsize*cellcount +10 ,40 ,dark_green);
+
         game.Draw();
 
         EndDrawing();
