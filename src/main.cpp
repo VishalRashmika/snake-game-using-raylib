@@ -23,10 +23,28 @@ int cellcount = 25;
 
 class Food{
 public:
-    Vector2 position = {5,6};
+    Texture2D texture;
+
+    Food(){
+        Image image = LoadImage("graphics/food.png");
+        texture = LoadTextureFromImage(image);
+        UnloadImage(image);
+        position = GenerateRandomPos();
+
+    }
+
+    ~Food(){
+        UnloadTexture(texture);
+    }
 
     void Draw(){
-        DrawRectangle(position.x * cellsize,position.y * cellsize,cellsize,cellsize,dark_green);
+        DrawTexture(texture, position.x * cellsize,position.y * cellsize, BLACK);
+    }
+
+    Vector2 GenerateRandomPos(){
+        float x = GetRandomValue(0, cellcount - 1);
+        float y = GetRandomValue(0, cellcount - 1);
+        return Vector2{x,y};
     }
 };
 
